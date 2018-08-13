@@ -660,6 +660,7 @@ Has no effect if an external `pe/directory-tree-function' is used."
     (make-backup-file-name filename))))
 
 (defun pe/cache-save ()
+  (setq-local pe/project-root (funcall pe/project-root-function))
   (cl-assert pe/project-root)
   (let (( cache-file-name (pe/cache-make-filename default-directory))
         ( data pe/data))
@@ -681,6 +682,7 @@ Has no effect if an external `pe/directory-tree-function' is used."
                                    pe/cache-alist))))
 
 (cl-defun pe/cache-load ()
+  (setq-local pe/project-root (funcall pe/project-root-function))
   (cl-assert pe/project-root)
   (let (( from-alist (cl-assoc default-directory pe/cache-alist
                                :test 'string-equal)))
@@ -1541,6 +1543,7 @@ Redraws the tree based on DATA. Will try to restore folds, if TYPE is
                                  default-directory)))
                         (pe/get-filename)))))
 
+          (setq-local pe/project-root (funcall pe/project-root-function))
           (cl-assert pe/project-root)
 
           (setq pe/data data)
