@@ -1528,6 +1528,7 @@ File name defaults to `buffer-file-name'"
 Redraws the tree based on DATA. Will try to restore folds, if TYPE is
 `refresh'. Saves data to cache, if caching is enabled."
   (cl-assert (memq type '(refresh directory-change)))
+  (select-window (pe/get-project-explorer-window))
   (setq buffer (or buffer (current-buffer)))
   (let ((user-buffer (current-buffer)))
     (with-selected-window
@@ -1566,6 +1567,8 @@ Redraws the tree based on DATA. Will try to restore folds, if TYPE is
 
             (erase-buffer)
             (delete-all-overlays)
+            (select-window (pe/get-project-explorer-window))
+            (cl-assert (eq (selected-window) (pe/get-project-explorer-window)))
             (pe/print-tree data-for-print)
             (font-lock-fontify-buffer)
             (goto-char (point-min)))
