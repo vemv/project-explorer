@@ -1568,9 +1568,6 @@ Redraws the tree based on DATA. Will try to restore folds, if TYPE is
                     (cons (car data-for-print)
                           (mapcar 'pe/compress-tree (cdr data-for-print)))))
 
-            (setcdr data-for-print (cons ".." (cdr data-for-print)))
-            (setcdr data-for-print (cons "." (cdr data-for-print)))
-
             (erase-buffer)
             (delete-all-overlays)
             (select-window (pe/get-project-explorer-window))
