@@ -272,13 +272,13 @@ Set once, when the buffer is first created.")
                (if (not (re-search-forward "^Ignored files:" nil t))
                    (with-current-buffer initial-buffer
                      (funcall callback nil))
-                   (delete-region (point-min) (point))
-                   (keep-lines "^\t")
-                   (setq result
-                         (mapcar 'expand-file-name
-                                 (split-string (buffer-string) "\n" t "\t")))
-                   (with-current-buffer initial-buffer
-                     (funcall callback result))))
+                 (delete-region (point-min) (point))
+                 (keep-lines "^\t")
+                 (setq result
+                       (mapcar 'expand-file-name
+                               (split-string (buffer-string) "\n" t "\t")))
+                 (with-current-buffer initial-buffer
+                   (funcall callback result))))
              (kill-buffer buffer)
              )))
     (set-process-sentinel process sentinel)))
@@ -286,19 +286,19 @@ Set once, when the buffer is first created.")
 (defun pe/project-root-function-default ()
   (if (fboundp 'projectile-project-root)
       (projectile-project-root)
-      (let (( candidates
-              (list (locate-dominating-file default-directory ".git")
-                    (cl-find-if (lambda (a-root) (string-prefix-p a-root default-directory))
-                                (mapcar (apply-partially 'buffer-local-value 'pe/project-root)
-                                        (pe/get-project-explorer-buffers)))
-                    )))
-        (if (cl-every 'null candidates)
-            default-directory
-            (cl-reduce (lambda (a b)
-                         (if (> (length a) (length b)) a b))
-                       (mapcar 'expand-file-name
-                               (remq nil candidates))))
-        )))
+    (let (( candidates
+            (list (locate-dominating-file default-directory ".git")
+                  (cl-find-if (lambda (a-root) (string-prefix-p a-root default-directory))
+                              (mapcar (apply-partially 'buffer-local-value 'pe/project-root)
+                                      (pe/get-project-explorer-buffers)))
+                  )))
+      (if (cl-every 'null candidates)
+          default-directory
+        (cl-reduce (lambda (a b)
+                     (if (> (length a) (length b)) a b))
+                   (mapcar 'expand-file-name
+                           (remq nil candidates))))
+      )))
 
 (cl-defun pe/compress-tree (branch)
   (cond ( (not (consp branch))          ; File
@@ -332,7 +332,7 @@ Directories first, then alphabetically."
                         ( t (string< a b)))))))
     (if dont-recurse
         (setcdr branch new-rest)
-        (setcdr branch (mapcar 'pe/sort new-rest)))
+      (setcdr branch (mapcar 'pe/sort new-rest)))
     branch
     ))
 
@@ -347,18 +347,18 @@ Directories first, then alphabetically."
                                     for segment in entry
                                     do (if is-last
                                            (setcdr head (cons segment (cdr head)))
-                                           (setq head (or (cl-find-if (lambda (it)
-                                                                        (and (consp it)
-                                                                             (equal (car it) segment)))
-                                                                      (cdr head))
-                                                          (progn (setcdr head (cons (list segment) (cdr head)))
-                                                                 (cadr head)))))))
+                                         (setq head (or (cl-find-if (lambda (it)
+                                                                      (and (consp it)
+                                                                           (equal (car it) segment)))
+                                                                    (cdr head))
+                                                        (progn (setcdr head (cons (list segment) (cdr head)))
+                                                               (cadr head)))))))
                 (walker (branch &optional trail)
                         (cl-dolist (it (cdr branch))
                           (if (consp it)
                               (walker it (append trail (list (car it))))
-                              (when (string-match-p regex it)
-                                (add-entry (append trail (list it))))))))
+                            (when (string-match-p regex it)
+                              (add-entry (append trail (list it))))))))
       (walker tree)
       (pe/sort result-tree)
       )))
@@ -368,10 +368,10 @@ Directories first, then alphabetically."
 Hides empty directories. With prefix arg, disable filtering."
   (interactive (list (if current-prefix-arg
                          nil
-                         (read-string "Set filter regex: "
-                                      pe/filter-regex
-                                      nil
-                                      '(nil)))))
+                       (read-string "Set filter regex: "
+                                    pe/filter-regex
+                                    nil
+                                    '(nil)))))
   (setq-local pe/filter-regex filter)
   (pe/set-tree nil 'refresh pe/data))
 
@@ -407,12 +407,12 @@ Has no effect if an external `pe/directory-tree-function' is used."
                               :key (lambda (it)
                                      (if (consp it)
                                          (car it)
-                                         it))
+                                       it))
                               :test 'equal))
-                   (setq head (cl-find (car segments)
-                                       (cdr head)
-                                       :key 'car-safe
-                                       :test 'equal))))
+                 (setq head (cl-find (car segments)
+                                     (cdr head)
+                                     :key 'car-safe
+                                     :test 'equal))))
              (split-string relative-name "/" t))))
 
 (cl-defun pe/data-add (file-name &optional thing-to-add)
@@ -434,15 +434,15 @@ Has no effect if an external `pe/directory-tree-function' is used."
          ( thing-to-add (or thing-to-add
                             (if is-directory
                                 (last segments)
-                                (car (last segments)))))
+                              (car (last segments)))))
          ( head pe/data))
     (cl-mapl (lambda (segments)
                (if (not (cdr segments))
                    (setcdr head (cdr (pe/sort (nconc head (list thing-to-add)))))
-                   (setq head (cl-find (car segments)
-                                       (cdr head)
-                                       :key 'car-safe
-                                       :test 'equal))))
+                 (setq head (cl-find (car segments)
+                                     (cdr head)
+                                     :key 'car-safe
+                                     :test 'equal))))
              segments)))
 
 (cl-defun pe/data-delete (file-name)
@@ -460,12 +460,12 @@ Has no effect if an external `pe/directory-tree-function' is used."
                                            :key (lambda (it)
                                                   (if (consp it)
                                                       (car it)
-                                                      it))
+                                                    it))
                                            :test 'equal))
-                   (setq head (cl-find (car segments)
-                                       (cdr head)
-                                       :key 'car-safe
-                                       :test 'equal))))
+                 (setq head (cl-find (car segments)
+                                     (cdr head)
+                                     :key 'car-safe
+                                     :test 'equal))))
              (split-string relative-name "/" t))))
 
 (defun pe/revert-cancel ()
@@ -510,7 +510,7 @@ Has no effect if an external `pe/directory-tree-function' is used."
                                             (if (or (not is-last)
                                                     (eq type 'directory))
                                                 (list segment)
-                                                segment)
+                                              segment)
                                             head)
                                    ))))
     (cadr root)
@@ -536,7 +536,7 @@ Has no effect if an external `pe/directory-tree-function' is used."
                        (mapcar (lambda (file-spec)
                                  (if (nth 2 file-spec)
                                      (walker (nth 1 file-spec))
-                                     (nth 0 file-spec)))
+                                   (nth 0 file-spec)))
                                file-specs)))))
     (funcall done-func (pe/sort (walker dir)))))
 
@@ -565,7 +565,7 @@ Has no effect if an external `pe/directory-tree-function' is used."
                                                    dir)))
                                   (cl-callf pe/sort result)
                                   (funcall done-func result))
-                                (setq pe/reverting nil))))
+                              (setq pe/reverting nil))))
     ))
 
 (put 'pe/get-directory-tree-external 'pe/async t)
@@ -617,16 +617,16 @@ Has no effect if an external `pe/directory-tree-function' is used."
                                               full-path done-func root-level)))))
                                  pe/get-directory-tree-async-queue)
                            iter)
-                         file)))
+                       file)))
     (setq pe/get-directory-tree-async-timer
           (if pe/get-directory-tree-async-queue
               (run-with-idle-timer pe/get-directory-tree-async-delay
                                    nil (pop pe/get-directory-tree-async-queue))
-              (run-with-idle-timer pe/get-directory-tree-async-delay
-                                   nil
-                                   (lambda (raw-data)
-                                     (funcall done-func (pe/sort raw-data)))
-                                   root-level)))
+            (run-with-idle-timer pe/get-directory-tree-async-delay
+                                 nil
+                                 (lambda (raw-data)
+                                   (funcall done-func (pe/sort raw-data)))
+                                 root-level)))
     level))
 
 (put 'pe/get-directory-tree-async 'pe/async t)
@@ -719,7 +719,7 @@ Has no effect if an external `pe/directory-tree-function' is used."
                                    (cl-delete-if (lambda (it3)
                                                    (string-match-p "/$" it3))
                                                  (pe/flatten-tree it)))
-                           (list (concat default-directory it))))
+                         (list (concat default-directory it))))
                      (cdr pe/data))))
     (cl-dolist (dir directories)
       (push (file-notify-add-watch dir '(change) 'pe/filenotify-callback)
@@ -746,7 +746,7 @@ Has no effect if an external `pe/directory-tree-function' is used."
              (pe/goto-file file-name)
              (if (pe/up-element-prog)
                  (pe/get-filename)
-                 default-directory)))
+               default-directory)))
          ( new-folds
            (cl-remove-if
             (apply-partially 'string-prefix-p file-name)
@@ -840,8 +840,8 @@ Has no effect if an external `pe/directory-tree-function' is used."
                      (if (file-name-absolute-p file-name)
                          (if (string-prefix-p default-directory file-name)
                              (substring file-name (length default-directory))
-                             (cl-return-from pe/goto-file))
-                         file-name)
+                           (cl-return-from pe/goto-file))
+                       file-name)
                      "/" t))
          ( init-pos (point))
          best-match
@@ -883,8 +883,8 @@ Has no effect if an external `pe/directory-tree-function' is used."
       (if (or found (and best-match use-best-match))
           (progn (goto-char best-match)
                  (when found (point)))
-          (goto-char init-pos)
-          nil))))
+        (goto-char init-pos)
+        nil))))
 
 (defun pe/user-get-filename ()
   "Return the aboslute file-name of the file at point.
@@ -974,7 +974,7 @@ Does nothing on an open line."
                                                           (length indent))))
                                             (if (re-search-forward regex nil t)
                                                 (line-end-position 0)
-                                                (point-max))))))
+                                              (point-max))))))
                                  (pe/make-hiding-overlay (line-end-position 1)
                                                          end))))
     (save-excursion
@@ -991,7 +991,7 @@ Does nothing on an open line."
                    (if (or (<= (point) root-point)
                            (memq (point) locations-to-fold))
                        (cl-return)
-                       (cl-pushnew (point) locations-to-fold))))
+                     (cl-pushnew (point) locations-to-fold))))
         (cl-dolist (location locations-to-fold)
           (goto-char location)
           (fold-this-line))
@@ -1033,7 +1033,7 @@ Return the position if movement has occured, nil otherwise."
                            initial-indentation)))
       (if (cl-minusp arg)
           (goto-char (line-beginning-position))
-          (goto-char (line-end-position)))
+        (goto-char (line-end-position)))
       (when (re-search-forward regex nil t arg)
         (goto-char (match-end 0))
         (forward-char -1)
@@ -1071,12 +1071,12 @@ Directories are not included."
   (let (( current-prefix
           (if prefix
               (concat prefix "/" (car tree))
-              (car tree))))
+            (car tree))))
     (cons (concat current-prefix "/")
           (cl-mapcan (lambda (it)
                        (if (consp it)
                            (pe/flatten-tree it current-prefix)
-                           (list (concat current-prefix "/" it))))
+                         (list (concat current-prefix "/" it))))
                      (cdr tree)))))
 
 (cl-defun pe/helm-candidates ()
@@ -1097,7 +1097,7 @@ Directories are not included."
                                         (cl-delete-if (lambda (it3)
                                                         (string-match-p "/$" it3))
                                                       (pe/flatten-tree it)))
-                                (list (concat default-directory it))))
+                              (list (concat default-directory it))))
                           (cdr pe/data))))
            ( flattened-file-list
              (cl-remove-if (lambda (file-name)
@@ -1122,7 +1122,7 @@ Directories are not included."
                                      (propertize file-name-nondirectory
                                                  'face
                                                  'font-lock-function-name-face)
-                                     file-name-nondirectory)))
+                                   file-name-nondirectory)))
                              (progn
                                (propertize (substring file-name default-directory-length)
                                            'face 'font-lock-keyword-face)))
@@ -1190,7 +1190,7 @@ Directories are not included."
                   (goto-char (line-beginning-position))
                   (looking-at-p "^\\.\\{1,2\\}$"))))
       (pe/tab arg)
-      (pe/find-file arg)))
+    (pe/find-file arg)))
 
 (defun pe/find-file (&optional arg)
   "Open the file or directory at point.
@@ -1199,9 +1199,9 @@ With a prefix argument, specify in which window to show it."
   (let ((file-name (pe/user-get-filename)))
     (if arg
         (esw/show-buffer (find-file-noselect file-name))
-        (funcall pe/display-content-buffer-function
-                 (find-file-noselect file-name))
-        )))
+      (funcall pe/display-content-buffer-function
+               (find-file-noselect file-name))
+      )))
 
 (defun pe/unfold (&optional expanded)
   "For interactive use only. Use `pe/unfold-prog' in code."
@@ -1235,7 +1235,7 @@ With a prefix argument, unfold all children."
   (interactive "P")
   (if (or arg (pe/folded-p))
       (pe/unfold arg)
-      (pe/fold)))
+    (pe/fold)))
 
 (defun pe/backtab (&optional arg)
   "Fold all directories.
@@ -1243,7 +1243,7 @@ With ARG unfold instead."
   (interactive "P")
   (if arg
       (pe/unfold-all)
-      (pe/fold-all)))
+    (pe/fold-all)))
 
 (defun pe/toggle-omit (arg)
   "Set the omit regex for the current buffer, and refresh.
@@ -1258,7 +1258,7 @@ With ARG, reset it to the default value."
                   (cl-plusp
                    (prefix-numeric-value
                     arg))
-                  (not pe/omit-enabled)))
+                (not pe/omit-enabled)))
   (setq-local pe/cache-enabled nil)
   (revert-buffer))
 
@@ -1285,8 +1285,8 @@ Otherwise an empty file."
     (let* (( is-directory (string-match-p "/$" file-name)))
       (if is-directory
           (make-directory (directory-file-name file-name))
-          (with-temp-buffer
-            (write-region nil nil file-name nil 'silent nil 'excl)))
+        (with-temp-buffer
+          (write-region nil nil file-name nil 'silent nil 'excl)))
 
       (pe/data-add file-name)
       (pe/set-tree nil 'refresh pe/data)
@@ -1309,7 +1309,7 @@ Otherwise an empty file."
 
       (if is-directory
           (delete-directory file-name t t)
-          (delete-file file-name t))
+        (delete-file file-name t))
 
       (pe/data-delete file-name)
       (pe/set-tree nil 'refresh pe/data)
@@ -1343,9 +1343,9 @@ Otherwise an empty file."
            ( new-file-name-literal
              (if (not (file-directory-p new-file-name))
                  new-file-name
-                 (concat (file-name-as-directory new-file-name)
-                         (file-name-nondirectory
-                          (directory-file-name file-name))))))
+               (concat (file-name-as-directory new-file-name)
+                       (file-name-nondirectory
+                        (directory-file-name file-name))))))
 
       (dired-rename-file file-name new-file-name 1)
 
@@ -1377,9 +1377,9 @@ Otherwise an empty file."
            ( new-file-name-literal
              (if (not (file-directory-p new-file-name))
                  new-file-name
-                 (concat (file-name-as-directory new-file-name)
-                         (file-name-nondirectory
-                          (directory-file-name file-name))))))
+               (concat (file-name-as-directory new-file-name)
+                       (file-name-nondirectory
+                        (directory-file-name file-name))))))
 
       (copy-file file-name new-file-name 1)
 
@@ -1453,7 +1453,7 @@ File name defaults to `buffer-file-name'"
                   (dired-current-directory))
                 (if (called-interactively-p 'interactive)
                     (user-error error-message)
-                    (error error-message))))))
+                  (error error-message))))))
     (project-explorer-open)
     (pe/show-file-prog file-name)))
 
@@ -1585,9 +1585,9 @@ Redraws the tree based on DATA. Will try to restore folds, if TYPE is
                               (if (derived-mode-p 'dired-mode)
                                   (expand-file-name
                                    (dired-current-directory))
-                                  (when (buffer-file-name)
-                                    (expand-file-name
-                                     (buffer-file-name)))))
+                                (when (buffer-file-name)
+                                  (expand-file-name
+                                   (buffer-file-name)))))
                             pe/origin-file-name)))
                   (when file-name
                     (pe/show-file-prog file-name))
@@ -1604,8 +1604,8 @@ Redraws the tree based on DATA. Will try to restore folds, if TYPE is
     (if (get pe/directory-tree-function 'pe/cancel)
         (if (y-or-n-p "A refresh is already in progress. Cancel it?")
             (pe/revert-cancel)
-            (cl-return-from pe/revert-buffer))
-        (user-error "Revert already in progress")))
+          (cl-return-from pe/revert-buffer))
+      (user-error "Revert already in progress")))
   (setq pe/reverting t)
 
   (let ((buffer (current-buffer)))
@@ -1616,9 +1616,9 @@ Redraws the tree based on DATA. Will try to restore folds, if TYPE is
            (funcall pe/directory-tree-function
                     default-directory
                     (apply-partially 'pe/set-tree (current-buffer) 'refresh))))
-        (funcall pe/directory-tree-function
-                 default-directory
-                 (apply-partially 'pe/set-tree (current-buffer) 'refresh)))))
+      (funcall pe/directory-tree-function
+               default-directory
+               (apply-partially 'pe/set-tree (current-buffer) 'refresh)))))
 
 (define-derived-mode project-explorer-mode special-mode
   "Project explorer"
@@ -1673,7 +1673,7 @@ Redraws the tree based on DATA. Will try to restore folds, if TYPE is
     (kbd "M-o") 'pe/toggle-omit
     ))
 
-(cl-defun pe/change-directory (dir)
+(cl-defun pe/change-directory (dir &optional done-fn)
   "Changes the root directory of the project explorer.
 The buffer will remain attached to it's project, even if the new directory is
 outside of the project's root."
@@ -1683,9 +1683,9 @@ outside of the project's root."
             "Set directory to: "
             (if (file-directory-p file-name)
                 file-name
-                (file-name-directory
-                 (directory-file-name
-                  file-name)))))))
+              (file-name-directory
+               (directory-file-name
+                file-name)))))))
   (unless (file-directory-p dir)
     (funcall (if (called-interactively-p 'any)
                  'user-error 'error)
@@ -1714,8 +1714,8 @@ outside of the project's root."
         (progn
           (setq pe/data cache)
           (pe/set-tree nil 'directory-change pe/data))
-        (setq pe/data nil)
-        (insert "Searching for files..."))
+      (setq pe/data nil)
+      (insert "Searching for files..."))
 
     (when (or (not cache)
               (and (get pe/directory-tree-function 'pe/async)
@@ -1727,16 +1727,26 @@ outside of the project's root."
              (setq pe/gitignored-files result)
              (funcall pe/directory-tree-function
                       default-directory
-                      (apply-partially 'pe/set-tree (current-buffer)
-                                       (if cache
-                                           'refresh
-                                           'directory-change)))))
-          (funcall pe/directory-tree-function
-                   default-directory
-                   (apply-partially 'pe/set-tree (current-buffer)
-                                    (if cache
-                                        'refresh
-                                        'directory-change)))))))
+                      (lambda (x)
+                        (funcall 'pe/set-tree
+                                 (current-buffer)
+                                 (if cache
+                                     'refresh
+                                   'directory-change)
+                                 x)
+                        (when done-fn
+                          (funcall done-fn))))))
+        (funcall pe/directory-tree-function
+                 default-directory
+                 (lambda (x)
+                   (funcall 'pe/set-tree
+                            (current-buffer)
+                            (if cache
+                                'refresh
+                              'directory-change)
+                            x)
+                   (when done-fn
+                     (funcall done-fn))))))))
 
 ;; Follow the currently opened buffer and show the corresponding
 ;; project
@@ -1761,7 +1771,7 @@ the current buffer, stop following."
         (let ((win (selected-window)))
           (project-explorer-open)
           (select-window win)))
-      (pe/stop-follow-current)))
+    (pe/stop-follow-current)))
 
 (defun pe/post-command-follow ()
   "Restart the timer to follow the project."
@@ -1779,21 +1789,24 @@ the current buffer, stop following."
   (remove-hook 'post-command-hook #'pe/post-command-follow))
 
 ;;;###autoload
-(cl-defun project-explorer-open ()
+(cl-defun project-explorer-open (&optional done-fn)
   "Show or create the project explorer for the current project."
   (interactive)
   (let* (( origin-file-name
            (if (derived-mode-p 'dired-mode)
                (expand-file-name
                 (dired-current-directory))
-               (when (buffer-file-name)
-                 (expand-file-name
-                  (buffer-file-name)))))
+             (when (buffer-file-name)
+               (expand-file-name
+                (buffer-file-name)))))
          ( project-root (or (funcall pe/project-root-function)
                             (error "Buffer %s is not associated with a project"
                                    (current-buffer))))
          ( project-explorer-buffer
-           (or (pe/get-current-project-explorer-buffer)
+           (or (let ((v (pe/get-current-project-explorer-buffer)))
+                 (when v
+                   (and done-fn (funcall done-fn)))
+                 v)
                (with-current-buffer
                    (generate-new-buffer " *project-explorer*")
                  (project-explorer-mode)
@@ -1802,7 +1815,7 @@ the current buffer, stop following."
                              project-root))
                  (setq pe/origin-file-name origin-file-name)
                  (condition-case error
-                     (pe/change-directory default-directory)
+                     (pe/change-directory default-directory done-fn)
                    (error (kill-buffer (current-buffer))
                           (signal (car error) (cdr error))))
                  (current-buffer)
@@ -1825,7 +1838,7 @@ the current buffer, stop following."
         (with-selected-window window
           (with-current-buffer (window-buffer window)
             (pe/quit)))
-        (project-explorer-open))))
+      (project-explorer-open))))
 
 ;; FIXME: auto-revert
 ;; FIXME: filenotify
