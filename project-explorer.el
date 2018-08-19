@@ -1647,40 +1647,7 @@ Redraws the tree based on DATA. Will try to restore folds, if TYPE is
                              (0 'pe/directory-face append))))
 
   (when pe/mode-line-format
-    (setq-local mode-line-format
-                pe/mode-line-format))
-
-  (es-define-keys project-explorer-mode-map
-    (kbd "+") 'pe/create-file
-    (kbd "-") 'pe/delete-file
-    (kbd "d") 'pe/delete-file
-    (kbd "u") 'pe/up-element
-    (kbd "a") 'pe/goto-top
-    (kbd "TAB") 'pe/tab
-    (kbd "<backtab>") 'pe/backtab
-    (kbd "M-}") 'pe/forward-element
-    (kbd "M-{") 'pe/backward-element
-    (kbd "]") 'pe/forward-element
-    (kbd "[") 'pe/backward-element
-    (kbd "n") 'next-line
-    (kbd "p") 'previous-line
-    (kbd "j") 'next-line
-    (kbd "k") 'previous-line
-    (kbd "l") 'forward-char
-    (kbd "h") 'backward-char
-    (kbd "RET") 'pe/return
-    (kbd "<mouse-2>") 'pe/middle-click
-    (kbd "<mouse-1>") 'pe/left-click
-    (kbd "q") 'pe/quit
-    (kbd "s") 'pe/change-directory
-    (kbd "r") 'pe/rename-file
-    (kbd "c") 'pe/copy-file
-    (kbd "f") 'pe/find-file
-    (kbd "w") 'pe/copy-file-name-as-kill
-    (kbd "M-k") 'pe/ack-and-a-half
-    (kbd "M-l") 'pe/set-filter-regex
-    (kbd "M-o") 'pe/toggle-omit
-    ))
+    (setq-local mode-line-format pe/mode-line-format)))
 
 (cl-defun pe/change-directory (dir &optional done-fn)
   "Changes the root directory of the project explorer.
