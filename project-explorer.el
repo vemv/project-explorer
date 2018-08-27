@@ -820,23 +820,24 @@ Has no effect if an external `pe/directory-tree-function' is used."
 
 (defun pe/get-filename ()
   "Return the filename at point."
-  (save-excursion
-    (cl-labels
-        (( get-line-text ()
-                         (goto-char (line-beginning-position))
-                         (skip-chars-forward "\t ")
-                         (buffer-substring-no-properties
-                          (point) (line-end-position))))
-      (save-restriction
-        (widen)
-        ;; FIXME: Differentiate between segments in inlined folders
-        (let (( result (get-line-text)))
-          (while (pe/up-element-prog)
-            (setq result (concat (get-line-text) result)))
-          (setq result (expand-file-name result))
-          (when (file-directory-p result)
-            (setq result (file-name-as-directory result)))
-          result)))))
+  (let ((default-directory (funcall pe/project-root-function)))
+    (save-excursion
+      (cl-labels
+          (( get-line-text ()
+                           (goto-char (line-beginning-position))
+                           (skip-chars-forward "\t ")
+                           (buffer-substring-no-properties
+                            (point) (line-end-position))))
+        (save-restriction
+          (widen)
+          ;; FIXME: Differentiate between segments in inlined folders
+          (let (( result (get-line-text)))
+            (while (pe/up-element-prog)
+              (setq result (concat (get-line-text) result)))
+            (setq result (expand-file-name result))
+            (when (file-directory-p result)
+              (setq result (file-name-as-directory result)))
+            result))))))
 
 (cl-defun pe/goto-file
     (file-name &optional on-each-semgent-function use-best-match)
