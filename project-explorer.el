@@ -1535,9 +1535,10 @@ File name defaults to `buffer-file-name'"
 Redraws the tree based on DATA. Will try to restore folds, if TYPE is
 `refresh'. Saves data to cache, if caching is enabled."
   (cl-assert (memq type '(refresh directory-change)))
-  (select-window (pe/get-project-explorer-window))
-  (setq buffer (or buffer (current-buffer)))
-  (let ((user-buffer (current-buffer)))
+  (let* ((_window (pe/get-project-explorer-window))
+         (_ (select-window _window))
+         (buffer (or buffer (window-buffer _window)))
+         (user-buffer (current-buffer)))
     (with-selected-window
         (or (get-buffer-window buffer)
             (selected-window))
@@ -1706,7 +1707,7 @@ outside of the project's root."
                       default-directory
                       (lambda (x)
                         (funcall 'pe/set-tree
-                                 (current-buffer)
+                                 nil
                                  (if cache
                                      'refresh
                                    'directory-change)
@@ -1717,7 +1718,7 @@ outside of the project's root."
                  default-directory
                  (lambda (x)
                    (funcall 'pe/set-tree
-                            (current-buffer)
+                            nil
                             (if cache
                                 'refresh
                               'directory-change)
