@@ -1692,8 +1692,7 @@ outside of the project's root."
         (progn
           (setq pe/data cache)
           (pe/set-tree nil 'directory-change pe/data))
-      (setq pe/data nil)
-      (insert "Searching for files..."))
+      (setq pe/data nil))
 
     (when (or (not cache)
               (and (get pe/directory-tree-function 'pe/async)
